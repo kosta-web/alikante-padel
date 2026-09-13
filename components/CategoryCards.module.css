@@ -1,0 +1,216 @@
+.wrap {
+  padding-bottom: 0;
+}
+
+/* ============================================================
+   >= 900px — expanding accordion row.
+   One card is expanded by default (the featured one); hovering
+   any card expands it and returns the others to their base size.
+   Proportions measured off the design: card 232 / expanded 577
+   (ratio 2.49), gap 23, height 401.
+   ============================================================ */
+.grid {
+  display: flex;
+  gap: clamp(12px, 1.6vw, 23px);
+  height: clamp(280px, 21vw, 410px);
+}
+
+.card {
+  --pad: clamp(14px, 1.5vw, 22px);
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--pad);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--white);
+  background: var(--dark);
+  transition: flex-grow 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* default open card */
+.card[data-open="true"] {
+  flex-grow: 2.49;
+}
+
+/* while the row is hovered every card falls back to its base width... */
+.grid[data-hover="true"] .card {
+  flex-grow: 1;
+}
+
+/* ...and only the active one (tracked by pointer position, not each
+   card's own :hover, to avoid the resize/hover feedback loop) expands */
+.grid[data-hover="true"] .card[data-hover-active="true"],
+.grid .card:focus-visible {
+  flex-grow: 2.49;
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 32%;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover .media img {
+  transform: scale(1.05);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 8, 0.28) 0%,
+    rgba(8, 10, 8, 0.06) 34%,
+    rgba(8, 10, 8, 0.72) 100%
+  );
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+  background: var(--accent-bright);
+  color: var(--accent-ink);
+  font-size: var(--fs-pill);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.arrow {
+  width: clamp(18px, 1.8vw, 22px);
+  height: clamp(18px, 1.8vw, 22px);
+  color: var(--white);
+  flex-shrink: 0;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover .arrow {
+  transform: translate(3px, -3px);
+}
+
+.title {
+  margin-top: auto;
+  /* sized so a collapsed card still fits its label without clipping */
+  font-size: clamp(1rem, 0.52rem + 1.05vw, 1.55rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.subtitle {
+  margin-top: 7px;
+  font-size: clamp(0.82rem, 0.78rem + 0.2vw, 0.95rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+}
+
+/* nav buttons only exist in gallery mode */
+.nav {
+  display: none;
+}
+
+/* ============================================================
+   < 900px — horizontal gallery with prev/next buttons
+   ============================================================ */
+@media (max-width: 899px) {
+  .grid {
+    height: auto;
+    gap: 17px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+    /* without this, snapping pulls the first card past the gutter */
+    scroll-padding-inline: var(--gutter);
+  }
+
+  .card,
+  .card[data-open="true"],
+  .grid[data-hover="true"] .card,
+  .card[data-hover-active="true"] {
+    flex: 0 0 clamp(240px, 76vw, 337px);
+    aspect-ratio: 337 / 430;
+    scroll-snap-align: start;
+    transition: none;
+  }
+
+  .title,
+  .subtitle {
+    white-space: normal;
+  }
+
+  .nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .navBtn {
+    width: clamp(44px, 12vw, 53px);
+    height: clamp(44px, 12vw, 53px);
+    border: 0;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    display: grid;
+    place-items: center;
+    transition: background 0.28s ease, color 0.28s ease, transform 0.2s ease;
+  }
+
+  .navBtn svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .navBtn:hover:not(:disabled),
+  .navBtn:focus-visible:not(:disabled) {
+    background: var(--accent-bright);
+    color: var(--accent-ink);
+  }
+
+  .navBtn:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+
+  .navBtn:disabled {
+    opacity: 0.38;
+    cursor: default;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .media img,
+  .arrow,
+  .navBtn {
+    transition: none;
+  }
+}

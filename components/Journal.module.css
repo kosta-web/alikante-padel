@@ -1,0 +1,251 @@
+.section {
+  padding-block: var(--section-y);
+}
+
+/* ---------- header ---------- */
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(24px, 6vw, 80px);
+}
+
+.title {
+  margin-top: clamp(12px, 1.6vw, 22px);
+  font-weight: 800;
+  font-size: var(--fs-h2);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+.title .line {
+  display: block;
+}
+.title .dim {
+  color: var(--muted);
+}
+
+.intro {
+  color: var(--text-secondary);
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  max-width: 24rem;
+  text-align: right;
+  margin-top: clamp(28px, 3vw, 48px);
+  flex-shrink: 0;
+}
+
+/* ---------- filter row ---------- */
+.filters {
+  margin-top: clamp(28px, 4vw, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: clamp(16px, 2vw, 22px);
+  border-bottom: 1px solid var(--line);
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 30px);
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.tab {
+  background: transparent;
+  border: 0;
+  padding: 8px 0;
+  font-size: clamp(0.88rem, 0.84rem + 0.2vw, 1rem);
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tab[data-active="true"] {
+  color: var(--accent-ink);
+  background: var(--accent);
+  border-radius: var(--r-pill);
+  padding: 8px 18px;
+  font-weight: 600;
+}
+
+.allLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.allLink svg {
+  width: 18px;
+  height: 18px;
+  color: #7d9c1e;
+  transition: transform 0.24s ease;
+}
+.allLink:hover svg {
+  transform: translate(3px, -3px);
+}
+
+/* ---------- cards ---------- */
+.grid {
+  margin-top: clamp(24px, 3vw, 40px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 1.8vw, 24px);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  aspect-ratio: 4 / 3;
+  min-height: 288px;
+  padding: clamp(16px, 1.8vw, 24px);
+  border-radius: var(--r-article);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--white);
+}
+
+.card .media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+.card .media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 45%;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card:hover .media img {
+  transform: scale(1.04);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 8, 0.28) 0%,
+    rgba(8, 8, 8, 0.05) 38%,
+    rgba(8, 8, 8, 0.85) 100%
+  );
+}
+
+.num {
+  font-size: var(--fs-article-num);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.cardBottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cat {
+  font-size: var(--fs-pill);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.cardTitle {
+  font-size: var(--fs-article-title);
+  font-weight: 600;
+  line-height: 1.16;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.read {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.read svg {
+  width: 15px;
+  height: 15px;
+  color: var(--accent);
+  transition: transform 0.24s ease;
+}
+.card:hover .read svg {
+  transform: translate(3px, -3px);
+}
+
+.more {
+  margin-top: clamp(20px, 2.4vw, 32px);
+}
+
+/* ============ responsive ============ */
+@media (max-width: 1120px) {
+  .head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .intro {
+    text-align: left;
+    max-width: 34rem;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .allLink {
+    display: none;
+  }
+  .filters {
+    justify-content: flex-start;
+  }
+  .grid {
+    display: flex;
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 12px;
+  }
+  .card {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+    aspect-ratio: 4 / 5;
+    min-height: 0;
+  }
+  .card .media img {
+    object-position: 50% 40%;
+  }
+}
+
+@media (max-width: 380px) {
+  .card {
+    flex-basis: 84%;
+  }
+}

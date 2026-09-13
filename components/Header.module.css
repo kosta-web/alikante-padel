@@ -1,0 +1,226 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header[data-scrolled="true"] {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  padding-block: clamp(14px, 2vw, 22px);
+  transition: padding 0.3s ease;
+}
+
+.header[data-scrolled="true"] .inner {
+  padding-block: clamp(10px, 1.4vw, 14px);
+}
+
+/* --- logo --- */
+.logo {
+  grid-column: 1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.logoMark {
+  width: clamp(30px, 3.4vw, 38px);
+  height: clamp(30px, 3.4vw, 38px);
+}
+
+.logoText {
+  font-weight: 600;
+  font-size: clamp(0.78rem, 0.7rem + 0.4vw, 0.95rem);
+  line-height: 1.08;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* --- centered desktop nav --- */
+.nav {
+  grid-column: 2;
+  display: flex;
+  gap: clamp(18px, 3vw, 44px);
+}
+
+.nav a {
+  font-size: var(--fs-nav);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding-block: 6px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1.5px;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.nav a:hover::after {
+  transform: scaleX(1);
+}
+
+/* --- right cluster (mobile / tablet only) --- */
+.right {
+  grid-column: 3;
+  justify-self: end;
+  margin-left: auto; /* stays right-aligned even if the grid track collapses */
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(10px, 2.5vw, 16px);
+  flex-shrink: 0;
+}
+
+.menuLabel {
+  font-size: var(--fs-nav);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.burger {
+  width: clamp(44px, 11vw, 52px);
+  height: clamp(44px, 11vw, 52px);
+  border-radius: 999px;
+  border: 0;
+  background: #fcfcfb;
+  box-shadow: 0 8px 26px -8px rgba(0, 0, 0, 0.14),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.burger:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.18),
+    0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.burger svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* --- fullscreen overlay menu ---
+   Lives OUTSIDE <header> in the DOM: the sticky header uses backdrop-filter,
+   which would otherwise become the containing block for this fixed element. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--bg);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateY(-100%);
+  visibility: hidden;
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.42s;
+}
+
+.overlay[data-open="true"] {
+  transform: translateY(0);
+  visibility: visible;
+}
+
+/* mirrors the global .container so the logo lands exactly where it sits in the header */
+.overlayInner {
+  width: 100%;
+  max-width: var(--container);
+  min-height: 100%;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  flex-direction: column;
+}
+
+/* identical vertical rhythm to .inner, so logo + button stay on the header line */
+.overlayTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-block: clamp(14px, 2vw, 22px);
+  flex-shrink: 0;
+}
+
+.overlayNav {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, 1vw, 10px);
+  margin-top: clamp(24px, 7vh, 84px);
+}
+
+.overlayNav a {
+  font-size: clamp(1.9rem, 1rem + 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  padding-block: 4px;
+  transition: color 0.2s ease, padding-left 0.25s ease;
+}
+
+.overlayNav a:hover {
+  color: #6f8a1c;
+  padding-left: 12px;
+}
+
+.overlayFoot {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  padding-top: 32px;
+  padding-bottom: var(--gutter);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    transition: visibility 0.42s;
+  }
+}
+
+/* --- responsive ---
+   Desktop: centered nav only.
+   Mobile / tablet (<= 1060px): nav hidden, "Меню" + burger button shown. */
+@media (min-width: 1061px) {
+  .right {
+    display: none;
+  }
+}
+
+@media (max-width: 1060px) {
+  .nav {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .menuLabel {
+    display: none;
+  }
+}
