@@ -1,4 +1,5 @@
 import { hero } from "@/lib/data";
+import CategoryCards from "./CategoryCards";
 import Reveal from "./Reveal";
 import styles from "./Hero.module.css";
 
@@ -22,6 +23,8 @@ export default function Hero() {
           <p className={styles.sub}>{hero.right}</p>
         </Reveal>
       </div>
+
+      <CategoryCards />
     </section>
   );
 }

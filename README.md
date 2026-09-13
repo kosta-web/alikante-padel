@@ -25,10 +25,10 @@ app/
   globals.css       токены (цвет, радиусы, fluid-типографика), reveal-анимация
 components/
   Header.tsx        sticky-шапка, центр-меню, полноэкранное меню по бургеру
-  Hero.tsx          H1 в 3 строки + два боковых подтекста
-  CategoryCards.tsx 6 карточек-категорий (5 светлых + 1 «фичер» с фото)
-  Community.tsx     секция «Сообщество» + чат-баблы с parallax + строка фич
-  Journal.tsx       «Padel Journal» + фильтр-табы (рабочая фильтрация) + карточки статей
+  Hero.tsx          H1 в 3 строки + два боковых подтекста + секция карточек-категорий
+  CategoryCards.tsx 6 карточек-категорий (5 светлых + 1 «фичер» с фото), рендерится внутри Hero
+  Community.tsx     секция «Сообщество» + фото + строка фич
+  Articles.tsx      «Padel Journal» + фильтр-табы (рабочая фильтрация) + карточки статей
   Reveal.tsx        обёртка reveal-on-scroll (IntersectionObserver, уважает reduced-motion)
   icons.tsx         SVG-иконки и логотип
 lib/

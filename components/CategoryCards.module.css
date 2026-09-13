@@ -1,4 +1,7 @@
 .wrap {
+  /* gap between the Hero copy above and this row, now that both live
+     in one merged <section> instead of two separately-padded ones */
+  margin-top: clamp(40px, 6vw, 80px);
   padding-bottom: 0;
 }
 

@@ -1,6 +1,5 @@
 .hero {
   padding-top: clamp(32px, 5vw, 68px);
-  padding-bottom: clamp(40px, 6vw, 80px);
   text-align: center;
 }
 

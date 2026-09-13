@@ -98,7 +98,7 @@ export const community = {
   ],
 };
 
-export const journal = {
+export const articles = {
   eyebrow: "Padel Journal",
   titleLines: [
     { text: "Играть — хорошо.", dim: false },
@@ -109,7 +109,7 @@ export const journal = {
   filters: ["Все", "Советы", "Тренировки", "Турниры", "Оборудование", "Истории"],
   allLink: { label: "Все материалы", href: "#" },
   moreLink: { label: "Смотреть все материалы", href: "#" },
-  articles: [
+  items: [
     {
       num: "01",
       category: "Советы",

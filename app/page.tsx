@@ -1,8 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import CategoryCards from "@/components/CategoryCards";
 import Community from "@/components/Community";
-import Journal from "@/components/Journal";
+import Articles from "@/components/Articles";
 
 export default function Page() {
   return (
@@ -10,9 +9,8 @@ export default function Page() {
       <Header />
       <main>
         <Hero />
-        <CategoryCards />
         <Community />
-        <Journal />
+        <Articles />
       </main>
     </>
   );

@@ -75,7 +75,7 @@ export default function CategoryCards() {
   };
 
   return (
-    <section className={styles.wrap} aria-label="Разделы клуба">
+    <div className={styles.wrap}>
       <div className="container">
         <Reveal>
           <div
@@ -138,6 +138,6 @@ export default function CategoryCards() {
           </div>
         </Reveal>
       </div>
-    </section>
+    </div>
   );
 }
