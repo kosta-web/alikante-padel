@@ -9,3 +9,6 @@ next-env.d.ts
 
 # Артефакты Playwright MCP (логи/скриншоты отладки)
 .playwright-mcp/
+
+# Служебные файлы Supabase CLI
+supabase/.temp/

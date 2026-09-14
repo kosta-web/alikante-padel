@@ -33,6 +33,10 @@ export const STORAGE_BUCKET = "site-media";
 export function publicImageUrl(path: string | null | undefined): string | undefined {
   if (!path) return undefined;
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  // Root-relative path — a placeholder shipped in `public/`, not a Storage
+  // object. Seeded content starts out pointing at these; uploading a real
+  // image in /admin replaces the value with a Storage key.
+  if (path.startsWith("/")) return path;
   const { data } = createPublicClient().storage.from(STORAGE_BUCKET).getPublicUrl(path);
   return data.publicUrl;
 }
