@@ -1,9 +1,10 @@
 import { hero } from "@/lib/data";
+import type { Card } from "@/lib/types";
 import CategoryCards from "./CategoryCards";
 import Reveal from "./Reveal";
 import styles from "./Hero.module.css";
 
-export default function Hero() {
+export default function Hero({ cards }: { cards: Card[] }) {
   return (
     <section className={styles.hero}>
       <div className="container">
@@ -24,7 +25,7 @@ export default function Hero() {
         </Reveal>
       </div>
 
-      <CategoryCards />
+      <CategoryCards cards={cards} />
     </section>
   );
 }

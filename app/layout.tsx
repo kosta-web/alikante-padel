@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+/* Fallback metadata for routes without their own `generateMetadata`
+   (e.g. /admin). Public routes set their own title/description from
+   Supabase (`site_settings` / `seo_pages`) — see app/page.tsx and co. */
 export const metadata: Metadata = {
-  title: "TOP PADEL ALICANTE — падел объединяет людей",
-  description:
-    "Тренировки для любого уровня, турниры и игровые встречи каждую неделю в Аликанте. Учись, играй и становись сильнее.",
+  title: "TOP PADEL ALICANTE",
+  description: "Падел-клуб в Аликанте.",
 };
 
 export const viewport: Viewport = {

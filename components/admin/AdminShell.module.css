@@ -1,0 +1,114 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid var(--line);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  font-size: 1.02rem;
+  padding: 0 8px;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.brand span {
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.navLink {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.navLink:hover {
+  background: var(--surface-2);
+}
+
+.navLink[data-active] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.logoutForm {
+  padding: 0 8px;
+}
+
+.logoutBtn {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.logoutBtn:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 32px clamp(20px, 4vw, 48px) 64px;
+}
+
+@media (max-width: 800px) {
+  .shell {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    gap: 16px;
+  }
+  .nav {
+    flex-direction: row;
+    flex: none;
+  }
+  .logoutForm {
+    padding: 0;
+    margin-left: auto;
+  }
+  .logoutBtn {
+    white-space: nowrap;
+  }
+}

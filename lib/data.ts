@@ -1,6 +1,9 @@
 /* ------------------------------------------------------------------
-   Site content. Kept in one place so copy / links are easy to edit.
-   All external links are placeholders (#) until real URLs are known.
+   Static site copy that isn't admin-editable (nav labels, hero text,
+   section headings/intros). Cards, games, price packages, gallery,
+   articles and SEO fields are admin-editable and live in Supabase —
+   see `lib/types.ts` for their shapes and `lib/content/queries.ts`
+   for how they're fetched.
 ------------------------------------------------------------------ */
 
 export const nav = [
@@ -21,64 +24,6 @@ export const hero = {
   right: "Турниры и игровые встречи каждую неделю в Аликанте.",
 };
 
-export type Category = {
-  label: string;
-  title: string;
-  href: string;
-  image: string;
-  /** object-position for the photo — tuned per shot so the subject survives the crop */
-  focus?: string;
-  featured?: boolean;
-  subtitle?: string;
-};
-
-export const categories: Category[] = [
-  {
-    label: "Турниры",
-    title: "Турниры",
-    href: "#",
-    image: "/images/category-cards/1.webp",
-    focus: "38% 45%",
-  },
-  {
-    label: "Тренировки",
-    title: "Тренировки",
-    href: "#",
-    image: "/images/category-cards/2.webp",
-    focus: "42% 45%",
-  },
-  {
-    label: "Ближайшая игра",
-    title: "Mexicano El Salt",
-    subtitle: "Среда · 19:30–21:30",
-    href: "#",
-    featured: true,
-    image: "/images/category-cards/3.webp",
-    focus: "58% 45%",
-  },
-  {
-    label: "Найти партнёра",
-    title: "Найти партнёра",
-    href: "#",
-    image: "/images/category-cards/4.webp",
-    focus: "50% 40%",
-  },
-  {
-    label: "Новости",
-    title: "Новости",
-    href: "#",
-    image: "/images/category-cards/5.webp",
-    focus: "50% 45%",
-  },
-  {
-    label: "Галерея",
-    title: "Галерея",
-    href: "#",
-    image: "/images/category-cards/6.webp",
-    focus: "50% 52%",
-  },
-];
-
 export const community = {
   eyebrow: "Сообщество",
   titleLines: [
@@ -98,7 +43,7 @@ export const community = {
   ],
 };
 
-export const articles = {
+export const articlesSection = {
   eyebrow: "Padel Journal",
   titleLines: [
     { text: "Играть — хорошо.", dim: false },
@@ -106,30 +51,39 @@ export const articles = {
     { text: "ещё лучше.", dim: true },
   ],
   body: "Советы, разборы, новости и всё, что помогает играть увереннее.",
-  filters: ["Все", "Советы", "Тренировки", "Турниры", "Оборудование", "Истории"],
   allLink: { label: "Все материалы", href: "#" },
   moreLink: { label: "Смотреть все материалы", href: "#" },
-  items: [
-    {
-      num: "01",
-      category: "Советы",
-      title: "Как выбрать ракетку под свой уровень",
-      href: "#",
-      image: "/images/articles/article-1.webp",
-    },
-    {
-      num: "02",
-      category: "Тренировки",
-      title: "5 ошибок, которые мешают играть стабильнее",
-      href: "#",
-      image: "/images/articles/article-2.webp",
-    },
-    {
-      num: "03",
-      category: "Турниры",
-      title: "Americano: как проходит самый популярный формат",
-      href: "#",
-      image: "/images/articles/article-3.webp",
-    },
+};
+
+export const gamesSection = {
+  eyebrow: "Игры и мероприятия",
+  titleLines: [
+    { text: "Играй", dim: false },
+    { text: "каждую неделю —", dim: true },
+    { text: "не только тренируйся.", dim: true },
   ],
+  body: "Турниры, мексикано и игровые встречи для любого уровня — расписание обновляется каждую неделю.",
+  allLink: { label: "Все игры", href: "/games" },
+};
+
+export const pricesSection = {
+  eyebrow: "Цены",
+  titleLines: [
+    { text: "Тренировки", dim: false },
+    { text: "и абонементы", dim: true },
+    { text: "под любой график.", dim: true },
+  ],
+  body: "Разовые занятия и пакеты тренировок — выбери, что подходит по частоте игры.",
+  allLink: { label: "Все тарифы", href: "/prices" },
+};
+
+export const gallerySection = {
+  eyebrow: "Галерея",
+  titleLines: [
+    { text: "Корты,", dim: false },
+    { text: "турниры", dim: true },
+    { text: "и моменты игры.", dim: true },
+  ],
+  body: "Фото с тренировок и турниров TOP PADEL ALICANTE.",
+  allLink: { label: "Вся галерея", href: "/gallery" },
 };

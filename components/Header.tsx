@@ -31,7 +31,7 @@ export default function Header() {
 
   const logo = (onClick?: () => void) => (
     <a
-      href="#"
+      href="/"
       className={styles.logo}
       aria-label="TOP PADEL ALICANTE"
       onClick={onClick}

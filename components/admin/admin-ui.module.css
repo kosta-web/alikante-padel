@@ -1,0 +1,319 @@
+/* Shared building blocks for the /admin pages — kept in one module so
+   every section (cards / news / categories / settings) looks the same. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 860px;
+}
+
+.pageHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.pageLead {
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  max-width: 46ch;
+}
+
+.empty {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+/* --- buttons --- */
+.primaryBtn,
+.btn,
+.btnGhost,
+.btnDanger,
+.ghostBtnLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+}
+
+.primaryBtn {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.primaryBtn:hover {
+  background: var(--accent-bright);
+}
+.primaryBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--ink);
+}
+.btn:hover {
+  background: var(--surface-2);
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.btnGhost:hover {
+  color: var(--ink);
+}
+
+.btnDanger {
+  background: transparent;
+  border-color: var(--line);
+  color: #b23b3b;
+}
+.btnDanger:hover {
+  background: #fbebeb;
+}
+
+.iconBtn {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 0.9rem;
+}
+.iconBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.iconBtn:not(:disabled):hover {
+  background: var(--surface-2);
+}
+
+.ghostBtnLink {
+  color: var(--text-secondary);
+}
+.ghostBtnLink:hover {
+  color: var(--ink);
+}
+
+/* --- lists --- */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.listItem {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.listRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.listInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.listTitle {
+  font-weight: 700;
+  font-size: 0.96rem;
+}
+
+.listMeta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.listActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.thumbPlaceholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  flex-shrink: 0;
+}
+
+/* --- cards / panels --- */
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cardTitle {
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+/* --- stats (dashboard) --- */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.statCard {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.statCard:hover {
+  border-color: var(--ink);
+}
+
+.statValue {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.statLabel {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.quickLinks {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* --- forms --- */
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.formRow .input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.input,
+.textarea,
+.formRow select {
+  font: inherit;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  color: var(--ink);
+  width: 100%;
+}
+
+.textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.input:focus-visible,
+.textarea:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 1px;
+}
+
+.hint {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.error {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #b23b3b;
+}
+
+.savedHint {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4f7a1e;
+}
+
+.formActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

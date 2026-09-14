@@ -6,3 +6,6 @@
 next-env.d.ts
 .DS_Store
 .env*
+
+# Артефакты Playwright MCP (логи/скриншоты отладки)
+.playwright-mcp/

@@ -3,16 +3,19 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type MouseEvent as ReactMouseEvent,
 } from "react";
-import { categories } from "@/lib/data";
+import type { Card } from "@/lib/types";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "./icons";
 import Reveal from "./Reveal";
 import styles from "./CategoryCards.module.css";
 
-export default function CategoryCards() {
+export default function CategoryCards({ cards }: { cards: Card[] }) {
+  const categories = useMemo(() => [...cards].sort((a, b) => a.sortOrder - b.sortOrder), [cards]);
+
   const scroller = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -87,7 +90,7 @@ export default function CategoryCards() {
           >
             {categories.map((c, i) => (
               <a
-                key={c.title + c.label}
+                key={c.id}
                 href={c.href}
                 className={styles.card}
                 data-open={c.featured || undefined}
