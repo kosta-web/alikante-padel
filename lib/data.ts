@@ -54,36 +54,3 @@ export const articlesSection = {
   allLink: { label: "Все материалы", href: "#" },
   moreLink: { label: "Смотреть все материалы", href: "#" },
 };
-
-export const gamesSection = {
-  eyebrow: "Игры и мероприятия",
-  titleLines: [
-    { text: "Играй", dim: false },
-    { text: "каждую неделю —", dim: true },
-    { text: "не только тренируйся.", dim: true },
-  ],
-  body: "Турниры, мексикано и игровые встречи для любого уровня — расписание обновляется каждую неделю.",
-  allLink: { label: "Все игры", href: "/games" },
-};
-
-export const pricesSection = {
-  eyebrow: "Цены",
-  titleLines: [
-    { text: "Тренировки", dim: false },
-    { text: "и абонементы", dim: true },
-    { text: "под любой график.", dim: true },
-  ],
-  body: "Разовые занятия и пакеты тренировок — выбери, что подходит по частоте игры.",
-  allLink: { label: "Все тарифы", href: "/prices" },
-};
-
-export const gallerySection = {
-  eyebrow: "Галерея",
-  titleLines: [
-    { text: "Корты,", dim: false },
-    { text: "турниры", dim: true },
-    { text: "и моменты игры.", dim: true },
-  ],
-  body: "Фото с тренировок и турниров TOP PADEL ALICANTE.",
-  allLink: { label: "Вся галерея", href: "/gallery" },
-};
