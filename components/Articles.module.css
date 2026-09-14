@@ -109,8 +109,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* width обязателен: иначе aspect-ratio пересчитывает ширину из
+     min-height (288 * 4/3 = 384px), карточка вылезает за свою колонку
+     и наезжает на соседнюю */
+  width: 100%;
+  min-width: 0;
   aspect-ratio: 4 / 3;
-  min-height: 288px;
+  min-height: clamp(228px, 24vw, 288px);
   padding: clamp(16px, 1.8vw, 24px);
   border-radius: var(--r-article);
   overflow: hidden;
@@ -212,7 +217,7 @@
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1000px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
