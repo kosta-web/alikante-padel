@@ -1,8 +1,19 @@
 "use server";
 
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createPublicClient, publicImageUrl } from "@/lib/supabase/public";
+import { createPublicClient } from "@/lib/supabase/public";
 import { requireAdminSession } from "@/lib/admin-auth";
+import { readAdminContent, type AdminContent } from "@/lib/content/core";
+import {
+  mapArticle,
+  mapArticleCategory,
+  mapCard,
+  mapGalleryCategory,
+  mapGalleryPhoto,
+  mapGame,
+  mapPricePackage,
+  mapSeoPage,
+  mapSiteSettings,
+} from "@/lib/content/mappers";
 import type {
   Article,
   ArticleCategory,
@@ -14,108 +25,6 @@ import type {
   SeoPage,
   SiteSettings,
 } from "@/lib/types";
-
-/* ------------------------------------------------------------------
-   Row → app-shape mappers (DB is snake_case, app is camelCase).
------------------------------------------------------------------- */
-
-function mapCard(row: any): Card {
-  return {
-    id: row.id,
-    label: row.label,
-    title: row.title,
-    subtitle: row.subtitle ?? undefined,
-    href: row.href,
-    image: publicImageUrl(row.image_path),
-    focus: row.focus ?? undefined,
-    featured: row.featured,
-    sortOrder: row.sort_order,
-  };
-}
-
-function mapArticleCategory(row: any): ArticleCategory {
-  return { id: row.id, label: row.label };
-}
-
-function mapArticle(row: any): Article {
-  return {
-    id: row.id,
-    slug: row.slug,
-    title: row.title,
-    categoryId: row.category_id,
-    image: publicImageUrl(row.image_path),
-    body: row.body,
-    seoTitle: row.seo_title ?? "",
-    seoDescription: row.seo_description ?? "",
-    publishedAt: row.published_at,
-    published: row.published,
-  };
-}
-
-function mapGame(row: any): Game {
-  return {
-    id: row.id,
-    title: row.title,
-    format: row.format ?? undefined,
-    startsAt: row.starts_at,
-    endsAt: row.ends_at ?? undefined,
-    location: row.location ?? undefined,
-    description: row.description ?? undefined,
-    image: publicImageUrl(row.image_path),
-    status: row.status,
-    spotsTotal: row.spots_total ?? undefined,
-    spotsTaken: row.spots_taken ?? undefined,
-    signupHref: row.signup_href,
-    sortOrder: row.sort_order,
-  };
-}
-
-function mapPricePackage(row: any): PricePackage {
-  return {
-    id: row.id,
-    title: row.title,
-    price: Number(row.price),
-    currency: row.currency,
-    unit: row.unit ?? undefined,
-    description: row.description ?? undefined,
-    features: row.features ?? [],
-    featured: row.featured,
-    ctaLabel: row.cta_label,
-    ctaHref: row.cta_href,
-    sortOrder: row.sort_order,
-  };
-}
-
-function mapGalleryCategory(row: any): GalleryCategory {
-  return { id: row.id, label: row.label, sortOrder: row.sort_order };
-}
-
-function mapGalleryPhoto(row: any): GalleryPhoto {
-  return {
-    id: row.id,
-    categoryId: row.category_id,
-    image: publicImageUrl(row.image_path) ?? "",
-    alt: row.alt ?? undefined,
-    caption: row.caption ?? undefined,
-    sortOrder: row.sort_order,
-  };
-}
-
-function mapSiteSettings(row: any): SiteSettings {
-  return {
-    siteTitle: row.site_title,
-    siteDescription: row.site_description,
-    favicon: publicImageUrl(row.favicon_path),
-  };
-}
-
-function mapSeoPage(row: any): SeoPage {
-  return {
-    pageSlug: row.page_slug,
-    title: row.title ?? "",
-    description: row.description ?? "",
-  };
-}
 
 /* ------------------------------------------------------------------
    Public reads — anon/publishable key, RLS-limited (published articles
@@ -292,77 +201,14 @@ export async function getSeoPage(pageSlug: string): Promise<SeoPage | null> {
 }
 
 /* ------------------------------------------------------------------
-   Admin reads — service-role key, bypasses RLS (sees drafts etc).
-   Requires a valid admin cookie session.
-
-   Здесь деградации нет намеренно: пустой список в редакторе читается как
-   «контент пропал», и его начнут заводить заново поверх существующего.
-   Редактору нужна честная ошибка.
+   Admin read — service-role key, bypasses RLS (sees drafts etc).
+   Сама выборка живёт в `core.ts`, общем с Telegram-ботом; здесь только
+   проверка cookie-сессии.
 ------------------------------------------------------------------ */
 
-export type AdminContent = {
-  cards: Card[];
-  articleCategories: ArticleCategory[];
-  articles: Article[];
-  games: Game[];
-  pricePackages: PricePackage[];
-  galleryCategories: GalleryCategory[];
-  galleryPhotos: GalleryPhoto[];
-  settings: SiteSettings;
-  seoPages: SeoPage[];
-};
+export type { AdminContent };
 
 export async function getAdminContent(): Promise<AdminContent> {
   await requireAdminSession();
-  const db = createAdminClient();
-
-  const [
-    cards,
-    articleCategories,
-    articles,
-    games,
-    pricePackages,
-    galleryCategories,
-    galleryPhotos,
-    settings,
-    seoPages,
-  ] = await Promise.all([
-    db.from("cards").select("*").order("sort_order", { ascending: true }),
-    db.from("article_categories").select("*").order("created_at", { ascending: true }),
-    db.from("articles").select("*").order("published_at", { ascending: false }),
-    db.from("games").select("*").order("starts_at", { ascending: true }),
-    db.from("price_packages").select("*").order("sort_order", { ascending: true }),
-    db.from("gallery_categories").select("*").order("sort_order", { ascending: true }),
-    db.from("gallery_photos").select("*").order("sort_order", { ascending: true }),
-    db.from("site_settings").select("*").eq("id", 1).maybeSingle(),
-    db.from("seo_pages").select("*").order("page_slug", { ascending: true }),
-  ]);
-
-  for (const result of [
-    cards,
-    articleCategories,
-    articles,
-    games,
-    pricePackages,
-    galleryCategories,
-    galleryPhotos,
-    settings,
-    seoPages,
-  ]) {
-    if (result.error) throw result.error;
-  }
-
-  return {
-    cards: (cards.data ?? []).map(mapCard),
-    articleCategories: (articleCategories.data ?? []).map(mapArticleCategory),
-    articles: (articles.data ?? []).map(mapArticle),
-    games: (games.data ?? []).map(mapGame),
-    pricePackages: (pricePackages.data ?? []).map(mapPricePackage),
-    galleryCategories: (galleryCategories.data ?? []).map(mapGalleryCategory),
-    galleryPhotos: (galleryPhotos.data ?? []).map(mapGalleryPhoto),
-    settings: settings.data
-      ? mapSiteSettings(settings.data)
-      : { siteTitle: "TOP PADEL ALICANTE", siteDescription: "" },
-    seoPages: (seoPages.data ?? []).map(mapSeoPage),
-  };
+  return readAdminContent();
 }

@@ -66,15 +66,67 @@ lib/
   data.ts             статичный копирайт, не завязанный на БД (nav, hero, заголовки секций)
   types.ts            типы админ-редактируемых сущностей (Card, Article, Game, …)
   content-store.tsx   клиентский стор для /admin (fetch/CRUD через Server Actions)
-  content/            queries.ts (чтение), actions.ts (запись), upload.ts (Storage)
+  content/            core.ts (чтение/запись/загрузка, без проверки доступа),
+                      actions.ts и queries.ts (то же под cookie-сессией /admin),
+                      upload.ts (Storage), mappers.ts (строка БД → тип приложения)
+  telegram/           бот-админка: config.ts (доступ), api.ts (клиент Bot API),
+                      session.ts (состояние диалога), sections.ts (разделы и поля),
+                      bot.ts (экраны и разбор обновлений)
   supabase/           public.ts (anon-клиент), admin.ts (service-role-клиент)
   admin-auth.ts        пароль/cookie-сессия /admin
+app/api/
+  telegram/webhook/   точка, на которую Telegram шлёт сообщения (setWebhook)
 supabase/
   migrations/0001_init.sql   схема, RLS, Storage bucket, сид site_settings/seo_pages
+  migrations/0003_telegram_sessions.sql   состояние диалога с ботом
 public/
   images/             плейсхолдеры фото для вёрстки (заменить на реальные ассеты)
   fonts/              Onest woff2
 ```
+
+## Админка в Telegram
+
+Тот же контент правится из чата с ботом — новости, цены, игры, галерея (включая
+загрузку фото), карточки главной, SEO и настройки сайта.
+
+Логика записи общая с веб-админкой: `lib/content/core.ts` умеет читать и писать,
+но ничего не знает о доступе. Проверку делает каждый вход своим способом —
+`/admin` сверяет cookie-сессию (`actions.ts`, `queries.ts`), бот сверяет
+отправителя с `TELEGRAM_ADMIN_IDS`. Поэтому правка из Telegram так же сбрасывает
+кэш страниц, и сайт обновляется сразу.
+
+Разделы и поля описаны таблицей в `lib/telegram/sections.ts` — экраны собираются
+из неё, а не пишутся по одному на раздел. Даты и время вводятся в виде
+`20.09.2026 18:30` и разбираются в зоне клуба (Europe/Madrid), а не в UTC,
+в котором живёт функция на Vercel.
+
+Библиотеки для ботов нет намеренно: нужны пять методов Bot API, и они лежат в
+`lib/telegram/api.ts` — маршрутизация всё равно своя, а состояние диалога и так
+живёт в Supabase (вебхук на Vercel не помнит ничего между сообщениями).
+
+### Подключение
+
+1. Переменные — в `.env.local` и в Environment Variables проекта на Vercel:
+   ```
+   TELEGRAM_BOT_TOKEN=...       # @BotFather → /mybots → API Token
+   TELEGRAM_ADMIN_IDS=...       # свой Telegram ID (@userinfobot), можно несколько через запятую
+   TELEGRAM_WEBHOOK_SECRET=...  # любая случайная строка, например `openssl rand -hex 32`
+   ```
+2. Выполнить `supabase/migrations/0003_telegram_sessions.sql` в SQL Editor Supabase.
+3. Задеплоить и один раз указать Telegram адрес вебхука:
+   ```bash
+   set -a; . ./.env.local; set +a
+   curl -s "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
+     -d "url=https://ВАШ-ДОМЕН/api/telegram/webhook" \
+     -d "secret_token=$TELEGRAM_WEBHOOK_SECRET" \
+     -d "drop_pending_updates=true"
+   ```
+   Проверка — `getWebhookInfo`: важны `pending_update_count` и `last_error_message`.
+
+Посторонним бот не отвечает вовсе — молчание не подсказывает, что за этим
+адресом админка. Вебхук дополнительно закрыт заголовком
+`X-Telegram-Bot-Api-Secret-Token`, который сверяется постоянным по времени
+сравнением.
 
 ## Что заменить перед продом
 
