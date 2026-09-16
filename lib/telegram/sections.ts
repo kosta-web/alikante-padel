@@ -21,7 +21,8 @@ export type FieldType =
   | "date"
   | "datetime"
   | "lines"
-  | "choice";
+  | "choice"
+  | "image";
 
 export type FieldSpec = {
   key: string;
@@ -31,6 +32,11 @@ export type FieldSpec = {
   choices?: { value: string; label: string }[];
   /** Подсказка под приглашением ввести значение. */
   hint?: string;
+  /** Только для image: папка в Storage — та же, что в веб-админке. */
+  folder?: string;
+  /** Поле нельзя очистить: в галерее фото — это и есть сама запись,
+   *  убирать его надо удалением строки, иначе упрёмся в not null. */
+  required?: boolean;
 };
 
 export type SectionItem = { id: string; title: string };
@@ -87,6 +93,7 @@ export const SECTIONS: SectionSpec[] = [
       { key: "title", label: "Заголовок", type: "text" },
       { key: "slug", label: "Адрес (slug)", type: "text", hint: "Латиницей, без пробелов." },
       { key: "body", label: "Текст", type: "longtext", hint: "Абзацы разделяйте пустой строкой." },
+      { key: "image", label: "Картинка", type: "image", folder: "articles" },
       { key: "categoryId", label: "Категория", type: "choice", choices: categoryChoices(c.articleCategories) },
       { key: "publishedAt", label: "Дата", type: "date" },
       { key: "published", label: "Опубликована", type: "bool" },
@@ -180,6 +187,7 @@ export const SECTIONS: SectionSpec[] = [
       { key: "format", label: "Формат", type: "text" },
       { key: "location", label: "Место", type: "text" },
       { key: "description", label: "Описание", type: "longtext" },
+      { key: "image", label: "Картинка", type: "image", folder: "games" },
       { key: "spotsTotal", label: "Всего мест", type: "number" },
       { key: "spotsTaken", label: "Занято мест", type: "number" },
       { key: "signupHref", label: "Ссылка записи", type: "text" },
@@ -213,6 +221,7 @@ export const SECTIONS: SectionSpec[] = [
       { key: "caption", label: "Подпись", type: "text" },
       { key: "alt", label: "Описание для поиска", type: "text" },
       { key: "categoryId", label: "Категория", type: "choice", choices: categoryChoices(c.galleryCategories) },
+      { key: "image", label: "Фото", type: "image", folder: "gallery", required: true },
     ],
     read: (c, id) => c.galleryPhotos.find((p) => p.id === id) as unknown as Record<string, unknown>,
     apply: (id, patch) => core.updateGalleryPhoto(id, patch),
@@ -243,6 +252,7 @@ export const SECTIONS: SectionSpec[] = [
       { key: "title", label: "Заголовок", type: "text" },
       { key: "subtitle", label: "Подзаголовок", type: "text" },
       { key: "href", label: "Ссылка", type: "text" },
+      { key: "image", label: "Картинка", type: "image", folder: "cards" },
       { key: "featured", label: "Крупная", type: "bool" },
     ],
     read: (c, id) => c.cards.find((x) => x.id === id) as unknown as Record<string, unknown>,
@@ -309,6 +319,9 @@ export function showValue(spec: FieldSpec, value: unknown): string {
       return Array.isArray(value) && value.length ? value.join(" · ") : "—";
     case "choice":
       return spec.choices?.find((c) => c.value === String(value))?.label ?? String(value);
+    case "image":
+      // Ссылка в карточке только зашумляет — важно, есть картинка или нет.
+      return "загружена";
     default:
       return clip(String(value), 60);
   }

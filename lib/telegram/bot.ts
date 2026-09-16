@@ -163,6 +163,28 @@ async function showField(
     return;
   }
 
+  // Картинку не вводят текстом — её присылают следующим сообщением.
+  if (f.type === "image") {
+    state.awaiting = f.key;
+    const url = item?.[f.key] ? String(item[f.key]) : "";
+    const rows: InlineKeyboard = [];
+    if (url && !f.required) {
+      rows.push([{ text: "🗑 Убрать картинку", callback_data: `v:${f.key}:` }]);
+    }
+    rows.push([{ text: "‹ Назад", callback_data: "x" }]);
+    await render(
+      chatId,
+      state,
+      url
+        ? `<b>${esc(f.label)}</b>\n\n<a href="${esc(url)}">Текущая картинка</a>\n\n` +
+            "Пришлите новую — она заменит эту."
+        : `<b>${esc(f.label)}</b>\nСейчас: <b>—</b>\n\nПришлите картинку сообщением.`,
+      rows,
+      true
+    );
+    return;
+  }
+
   state.awaiting = f.key;
   const hints: string[] = [];
   if (f.hint) hints.push(esc(f.hint));
@@ -184,9 +206,13 @@ async function showField(
 
 function parseValue(f: FieldSpec, raw: string): unknown {
   if (raw.trim() === "/clear") {
+    if (f.required) throw new Error("Это поле нельзя оставить пустым.");
     if (f.type === "lines") return [];
-    if (f.type === "number") return null;
+    if (f.type === "number" || f.type === "image") return null;
     return "";
+  }
+  if (f.type === "image") {
+    throw new Error("Сюда нужно прислать картинку, а не текст.");
   }
   switch (f.type) {
     case "number":
@@ -286,6 +312,7 @@ async function onCallback(chatId: number, state: TgState, data: string) {
     const raw = rest.slice(sep + 1);
     const f = field(spec, content, key);
     if (!f || !state.itemId) return;
+    // Пустой raw приходит с кнопки «убрать картинку» и со «без категории».
     const value = f.type === "bool" ? raw === "1" : raw || null;
     await spec.apply(state.itemId, { [key]: value });
     return showItem(chatId, state, spec, await readAdminContent(), state.itemId, true);
@@ -384,11 +411,32 @@ async function onPhoto(chatId: number, state: TgState, message: TgMessage) {
   const fileId = largest?.file_id ?? asDocument?.file_id;
   if (!fileId) {
     if (message.document) {
-      await sendMessage(chatId, "В галерею идут только изображения — этот файл не подойдёт.");
+      await sendMessage(chatId, "Это не изображение — такой файл не подойдёт.");
     }
     return;
   }
 
+  // Открыто поле-картинка (у статьи, игры, карточки) — фото идёт туда.
+  const openSpec = section(state.section);
+  const openField = openSpec && state.awaiting
+    ? field(openSpec, await readAdminContent(), state.awaiting)
+    : undefined;
+
+  if (openSpec && openField?.type === "image" && state.itemId) {
+    await sendMessage(chatId, "Загружаю картинку…");
+    const file = await downloadFile(fileId);
+    const url = await uploadImageBytes(openField.folder ?? "gallery", file.bytes, {
+      contentType: file.contentType,
+      ext: file.ext,
+    });
+    await openSpec.apply(state.itemId, { [openField.key]: url });
+    state.awaiting = undefined;
+    state.menuMessageId = undefined;
+    await sendMessage(chatId, `✅ ${esc(openField.label)} — сохранена.`);
+    return showItem(chatId, state, openSpec, await readAdminContent(), state.itemId, false);
+  }
+
+  // Иначе фото само по себе — это новая строка галереи.
   await sendMessage(chatId, "Загружаю фото…");
   const file = await downloadFile(fileId);
   const url = await uploadImageBytes("gallery", file.bytes, {
